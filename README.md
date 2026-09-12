@@ -1,6 +1,19 @@
 # ♠️ Callbridge Master — Score Calculator & Match Tracker
 
-A full-featured, responsive Web Application designed for calculating, entering, tracking, and storing scores for the popular card game **Callbridge**.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Srinjoy3002/callbridge-score-master)
+
+A full-featured, mobile-responsive Web Application designed for calculating, entering, tracking, and storing scores for the popular card game **Callbridge**, featuring a built-in **AI Probability Engine & Strategy Advisor**.
+
+**GitHub Repository:** [https://github.com/Srinjoy3002/callbridge-score-master](https://github.com/Srinjoy3002/callbridge-score-master)
+
+---
+
+## 📱 Mobile App Usage (Add to Home Screen)
+You can use Callbridge Master directly on your smartphone (iPhone or Android):
+1. Open your deployed Vercel URL in Safari (iOS) or Chrome (Android).
+2. **iOS**: Tap the **Share** button &rarr; tap **"Add to Home Screen"**.
+3. **Android**: Tap the **Three Dots Menu (&vellip;)** &rarr; tap **"Add to Home screen"** or **"Install app"**.
+4. Launch it like a native full-screen app!
 
 ---
 
