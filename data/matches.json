@@ -1,0 +1,32 @@
+[
+  {
+    "id": "match_1789172602145",
+    "date": "2026-09-12T00:23:22.145Z",
+    "players": [
+      "Player 1",
+      "Player 2",
+      "Player 3",
+      "Player 4",
+      "Player 5"
+    ],
+    "numPlayers": 5,
+    "trumpRule": "S",
+    "tricksPerRound": 10,
+    "totalRounds": 5,
+    "completedRounds": 0,
+    "isFinished": false,
+    "totals": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "rounds": [],
+    "settings": {
+      "failPenalty": "full_negative",
+      "overtrickBonus": 0.1,
+      "minCalls": 0
+    }
+  }
+]

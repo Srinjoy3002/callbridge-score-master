@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0d1117">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Callbridge">
+  <title>Callbridge Score Calculator & Tracker ♠️</title>
+  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo">
+        <span class="card-icon">♠️</span>
+        <div class="logo-text">
+          <h1>Callbridge Master</h1>
+          <span class="subtitle">Score Calculator & Match Tracker</span>
+        </div>
+      </div>
+      <nav class="nav-tabs">
+        <button class="nav-btn active" id="tab-game-btn" onclick="switchTab('game')">
+          <span class="icon">🎮</span>
+          <span class="tab-label">
+            <span class="desktop-text">Current Game</span>
+            <span class="mobile-text">Game</span>
+          </span>
+        </button>
+        <button class="nav-btn" id="tab-advisor-btn" onclick="switchTab('advisor')">
+          <span class="icon">🔮</span>
+          <span class="tab-label">
+            <span class="desktop-text">AI Probability & Advisor</span>
+            <span class="mobile-text">AI Advisor</span>
+          </span>
+        </button>
+        <button class="nav-btn" id="tab-history-btn" onclick="switchTab('history')">
+          <span class="icon">📜</span>
+          <span class="tab-label">
+            <span class="desktop-text">Match History</span>
+            <span class="mobile-text">History</span>
+          </span>
+        </button>
+        <button class="nav-btn" id="tab-settings-btn" onclick="switchTab('settings')">
+          <span class="icon">⚙️</span>
+          <span class="tab-label">
+            <span class="desktop-text">Rules & Settings</span>
+            <span class="mobile-text">Rules</span>
+          </span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+
+      <!-- TAB 1: GAME VIEW -->
+      <section id="tab-game" class="tab-content active">
+        <!-- New Game Setup Screen (Shown when no active game or starting new) -->
+        <div id="setup-view" class="card setup-card">
+          <div class="card-header">
+            <h2>Start New Callbridge Game</h2>
+            <p>Configure players and rules for the match</p>
+          </div>
+          <form id="setup-form" onsubmit="handleStartGame(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="player-count">👥 Number of Players</label>
+                <select id="player-count" onchange="handlePlayerCountChange()">
+                  <option value="2">2 Players (13 Cards / 13 Tricks)</option>
+                  <option value="3">3 Players (17 Cards / 17 Tricks)</option>
+                  <option value="4" selected>4 Players (13 Cards / 13 Tricks - Standard)</option>
+                  <option value="5">5 Players (10 Cards / 10 Tricks)</option>
+                  <option value="6">6 Players (8 Cards / 8 Tricks)</option>
+                </select>
+                <span class="help-text">Adjusts hand size, scoring grid, and tricks per round.</span>
+              </div>
+
+              <div class="form-group">
+                <label for="match-trump-rule">👑 Main Colour / Trump Suit</label>
+                <select id="match-trump-rule">
+                  <option value="S" selected>♠️ Spades (Classic Standard)</option>
+                  <option value="H">♥️ Hearts</option>
+                  <option value="D">♦️ Diamonds</option>
+                  <option value="C">♣️ Clubs</option>
+                  <option value="rotate">🔄 Rotates Every Round (♠ → ♥ → ♦ → ♣)</option>
+                  <option value="dealer">🎲 Dealer's Choice Each Round</option>
+                  <option value="NT">🚫 No Trump (High Card Wins)</option>
+                </select>
+                <span class="help-text">Choose permanent trump, round rotation, or dealer choice.</span>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <label class="section-title" id="players-section-title">👥 Player Names (4 Players)</label>
+              <div class="players-input-grid" id="players-input-grid">
+                <!-- Dynamically populated by handlePlayerCountChange() -->
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="total-rounds">🔄 Total Rounds</label>
+                <select id="total-rounds">
+                  <option value="3">3 Rounds (Quick Game)</option>
+                  <option value="5" selected>5 Rounds (Standard Match)</option>
+                  <option value="8">8 Rounds (Extended)</option>
+                  <option value="10">10 Rounds (Tournament)</option>
+                  <option value="13">13 Rounds (Full Deck rotation)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="starting-dealer">🃏 First Dealer</label>
+                <select id="starting-dealer">
+                  <!-- Dynamically populated by updateDealerOptions() -->
+                </select>
+              </div>
+            </div>
+
+            <div class="action-buttons">
+              <button type="submit" class="btn btn-primary btn-large">
+                <span>♠️ Start Match</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Active Game Screen (Shown when game is in progress) -->
+        <div id="active-game-view" class="active-game-container hidden">
+          <!-- Status Banner & Game Controls -->
+          <div class="game-status-bar">
+            <div class="round-info">
+              <span class="status-badge" id="round-indicator">Round 1 of 5</span>
+              <span class="dealer-badge" id="dealer-indicator">Dealer: Player 1</span>
+              <span class="trump-badge" id="trump-indicator">Main Colour: ♠ Spades</span>
+            </div>
+            <div class="game-actions">
+              <div id="dealer-trump-choice-wrap" class="dealer-choice-picker hidden">
+                <label for="dealer-trump-picker">👑 Trump:</label>
+                <select id="dealer-trump-picker" onchange="setRoundDealerTrump(this.value)">
+                  <option value="S">♠ Spades</option>
+                  <option value="H">♥ Hearts</option>
+                  <option value="D">♦ Diamonds</option>
+                  <option value="C">♣ Clubs</option>
+                  <option value="NT">🚫 No Trump</option>
+                </select>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="openAdvisorWithMatchContext()">🔮 AI Card Advisor</button>
+              <button class="btn btn-outline btn-sm" onclick="openGameCustomizationModal()">⚙️ Customize Match</button>
+              <button class="btn btn-outline btn-sm" onclick="confirmResetGame()">🔄 Reset Match</button>
+              <button class="btn btn-outline btn-sm" onclick="exportCurrentMatchCSV()">📥 Export CSV</button>
+            </div>
+          </div>
+
+          <!-- In-Game Customization Toolbar: Live Main Colour & Quick Match Settings -->
+          <div class="game-customization-toolbar">
+            <div class="game-toolbar-trump">
+              <span class="toolbar-label">👑 Switch Main Colour:</span>
+              <div class="trump-toggle-group" id="game-trump-selector">
+                <button type="button" id="game-trump-s" class="trump-toggle-btn suit-spades active" onclick="setGameMainColour('S')">♠️ Spades</button>
+                <button type="button" id="game-trump-h" class="trump-toggle-btn suit-hearts" onclick="setGameMainColour('H')">♥️ Hearts</button>
+                <button type="button" id="game-trump-d" class="trump-toggle-btn suit-diamonds" onclick="setGameMainColour('D')">♦️ Diamonds</button>
+                <button type="button" id="game-trump-c" class="trump-toggle-btn suit-clubs" onclick="setGameMainColour('C')">♣️ Clubs</button>
+                <button type="button" id="game-trump-nt" class="trump-toggle-btn suit-nt" onclick="setGameMainColour('NT')">🚫 No Trump</button>
+              </div>
+            </div>
+            <div class="game-toolbar-meta">
+              <span id="game-players-badge" class="badge-pill">👥 4 Players</span>
+              <span id="game-tricks-badge" class="badge-pill">🎯 13 Tricks/Round</span>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="openGameCustomizationModal()">⚙️ Edit Players & Rules</button>
+            </div>
+          </div>
+
+          <!-- Leaderboard Summary Cards -->
+          <div class="leaderboard-grid" id="leaderboard-cards">
+            <!-- Dynamic Player Cards Generated by JS -->
+          </div>
+
+          <!-- Round Entry Form Card -->
+          <div class="card entry-card" id="round-entry-card">
+            <div class="card-header flex-between">
+              <div>
+                <h3 id="entry-card-title">Enter Round 1 Scores</h3>
+                <p class="subtitle" id="entry-card-subtitle">Set bids (calls) and actual tricks won by each player</p>
+              </div>
+              <div class="tricks-counter" id="tricks-counter-badge">
+                Tricks Won: <span id="current-tricks-sum">0</span> / <span id="expected-tricks-total">13</span>
+              </div>
+            </div>
+
+            <form id="round-entry-form" onsubmit="handleRoundSubmit(event)">
+              <div class="round-input-grid" id="round-input-grid-container">
+                <!-- Dynamically populated by renderRoundEntryForm() -->
+              </div>
+
+              <div id="entry-error-msg" class="error-banner hidden"></div>
+
+              <div class="form-actions">
+                <button type="button" id="cancel-edit-btn" class="btn btn-secondary hidden" onclick="cancelEditingRound()">Cancel Edit</button>
+                <button type="submit" id="submit-round-btn" class="btn btn-success">
+                  <span>✅ Submit Round Scores</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Scoreboard Table Card -->
+          <div class="card table-card">
+            <div class="card-header flex-between">
+              <h3>Scoreboard History</h3>
+              <span class="text-muted" id="total-calls-badge">Total Match Calls: 0</span>
+            </div>
+
+            <div class="table-responsive">
+              <table class="scoreboard-table" id="scoreboard">
+                <thead>
+                  <tr id="table-header-row">
+                    <!-- Dynamic header columns -->
+                  </tr>
+                </thead>
+                <tbody id="scoreboard-body">
+                  <!-- Dynamic round rows -->
+                </tbody>
+                <tfoot>
+                  <tr id="scoreboard-footer" class="total-row">
+                    <!-- Dynamic footer totals -->
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+          <!-- Game Finished Winner Banner -->
+          <div id="game-over-banner" class="card game-over-card hidden">
+            <div class="trophy-icon">🏆</div>
+            <h2 id="winner-announcement">Player 1 Wins the Match!</h2>
+            <p id="winner-subtext">Final Score: 15.2 points</p>
+            <div class="winner-actions">
+              <button class="btn btn-primary" onclick="startNewGameFromBanner()">🎮 Start New Game</button>
+              <button class="btn btn-outline" onclick="switchTab('history')">📜 View Saved History</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: AI PROBABILITY & PLAY ADVISOR -->
+      <section id="tab-advisor" class="tab-content">
+
+        <!-- 1. Hand Selector & Deck Matrix Card -->
+        <div class="card advisor-card">
+          <div class="card-header flex-between flex-wrap gap-1">
+            <div>
+              <h2>🔮 AI Probability & Trick Play Advisor</h2>
+              <p>Pick your 13 cards to calculate win odds, optimal bids, and real-time trick tactics</p>
+            </div>
+            <div class="advisor-quick-actions">
+              <span id="hand-count-badge" class="badge-pill badge-warning">0 / 13 Selected</span>
+              <button type="button" class="btn btn-primary btn-sm" onclick="dealRandomHand()">🎲 Deal Random</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="dealPresetHand('strong')">♠️ Strong Hand</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="dealPresetHand('trump_heavy')">♣️ Trump Heavy</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="dealPresetHand('void_heavy')">⚡ Void Heavy</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="clearAdvisorHand()">🔄 Clear</button>
+            </div>
+          </div>
+
+          <!-- Main Colour (Trump) and Player Count Configuration Toolbar -->
+          <div class="advisor-config-toolbar">
+            <div class="toolbar-group">
+              <span class="toolbar-label">👑 Main Colour:</span>
+              <div class="trump-toggle-group" id="advisor-trump-selector">
+                <button type="button" id="trump-btn-s" class="trump-toggle-btn suit-spades active" onclick="setAdvisorTrump('S')">♠️ Spades</button>
+                <button type="button" id="trump-btn-h" class="trump-toggle-btn suit-hearts" onclick="setAdvisorTrump('H')">♥️ Hearts</button>
+                <button type="button" id="trump-btn-d" class="trump-toggle-btn suit-diamonds" onclick="setAdvisorTrump('D')">♦️ Diamonds</button>
+                <button type="button" id="trump-btn-c" class="trump-toggle-btn suit-clubs" onclick="setAdvisorTrump('C')">♣️ Clubs</button>
+                <button type="button" id="trump-btn-nt" class="trump-toggle-btn suit-nt" onclick="setAdvisorTrump('NT')">🚫 No Trump</button>
+              </div>
+            </div>
+
+            <div class="toolbar-group">
+              <span class="toolbar-label">👥 Players:</span>
+              <div class="player-toggle-group" id="advisor-player-selector">
+                <button type="button" id="player-btn-2" class="player-toggle-btn" onclick="setAdvisorPlayerCount(2)">2</button>
+                <button type="button" id="player-btn-3" class="player-toggle-btn" onclick="setAdvisorPlayerCount(3)">3</button>
+                <button type="button" id="player-btn-4" class="player-toggle-btn active" onclick="setAdvisorPlayerCount(4)">4</button>
+                <button type="button" id="player-btn-5" class="player-toggle-btn" onclick="setAdvisorPlayerCount(5)">5</button>
+                <button type="button" id="player-btn-6" class="player-toggle-btn" onclick="setAdvisorPlayerCount(6)">6</button>
+              </div>
+              <span class="text-muted text-sm" id="advisor-hand-size-hint">(13 cards / 13 tricks)</span>
+            </div>
+          </div>
+
+          <!-- Progress Bar for Card Selection -->
+          <div class="hand-progress-track">
+            <div id="hand-count-progress" class="hand-progress-bar" style="width: 0%;"></div>
+          </div>
+
+          <!-- Interactive Deck Picker Grid -->
+          <div class="deck-picker-container" id="deck-picker-suits">
+            <!-- Dynamically populated 4 suit rows (Spades, Hearts, Diamonds, Clubs) -->
+          </div>
+
+          <!-- Visual Fan of Selected 13 Cards -->
+          <div class="selected-hand-section">
+            <div class="hand-section-title">
+              <span>🃏 Your Current Hand (Click &times; on any card to remove):</span>
+            </div>
+            <div class="hand-tray" id="selected-hand-tray">
+              <!-- Dynamically populated playing cards -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Hand Analytics & Probability-Based Bidding Card -->
+        <div class="card advisor-card" id="advisor-stats-panel">
+          <div class="card-header flex-between flex-wrap gap-1">
+            <div>
+              <h3>📊 Hand Strength & Bidding Analysis</h3>
+              <p>Monte Carlo simulation (800 deals) across 3 opponent hands</p>
+            </div>
+            <div class="metrics-pill-group">
+              <div class="metric-pill">
+                <span class="label">High Card Pts</span>
+                <span class="value" id="stat-hcp">0 HCP</span>
+              </div>
+              <div class="metric-pill">
+                <span class="label">Total Points</span>
+                <span class="value text-gold" id="stat-total-pts">0 pts</span>
+              </div>
+              <div class="metric-pill">
+                <span class="label">Trumps (♠)</span>
+                <span class="value text-cyan" id="stat-trumps">0 Spades</span>
+              </div>
+              <div class="metric-pill highlight">
+                <span class="label">Expected Tricks</span>
+                <span class="value text-success" id="stat-expected-tricks">0.0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3 Strategic Bid Recommendation Cards -->
+          <div class="bid-recommendations-grid">
+            <div class="bid-card safe-bid">
+              <div class="bid-card-badge">🛡️ CONSERVATIVE / SAFE</div>
+              <div class="bid-card-number" id="rec-safe-bid">Call --</div>
+              <p class="bid-card-desc" id="rec-safe-prob">90%+ confidence. Minimal risk of penalty.</p>
+            </div>
+
+            <div class="bid-card optimal-bid">
+              <div class="bid-card-badge">🎯 OPTIMAL EV BID (RECOMMENDED)</div>
+              <div class="bid-card-number" id="rec-opt-bid">Call --</div>
+              <p class="bid-card-desc" id="rec-opt-ev">Highest expected value score.</p>
+            </div>
+
+            <div class="bid-card agg-bid">
+              <div class="bid-card-badge">⚔️ AGGRESSIVE BID</div>
+              <div class="bid-card-number" id="rec-agg-bid">Call --</div>
+              <p class="bid-card-desc" id="rec-agg-prob">High ceiling if opponents' suits break well.</p>
+            </div>
+          </div>
+
+          <!-- Probability Distribution Bars -->
+          <div class="prob-chart-section">
+            <div class="section-subheading">
+              <span>📈 Win Probability Distribution (Chance of winning &ge; X tricks)</span>
+            </div>
+            <div class="prob-bars-grid" id="prob-bars-container">
+              <!-- Dynamically populated horizontal probability bars -->
+            </div>
+          </div>
+
+          <!-- Suit-by-Suit Detailed Tactical Breakdown -->
+          <div class="suit-breakdown-section">
+            <div class="section-subheading">
+              <span>♠️ Suit-by-Suit Strategic Breakdown</span>
+            </div>
+            <div class="suit-cards-grid" id="suit-breakdown-cards">
+              <!-- 4 suit cards populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Live Trick Play Tactical Advisor ("What Card Should I Play?") -->
+        <div class="card advisor-card" id="advisor-trick-arena-panel">
+          <div class="card-header flex-between flex-wrap gap-1">
+            <div>
+              <h3>🎯 Live Trick Play Advisor ("What Should I Play?")</h3>
+              <p>Simulates what opponents throw and provides mathematically optimal card plays in real-time</p>
+            </div>
+            <div class="trick-contract-status">
+              <div class="contract-input-wrap">
+                <label for="advisor-custom-bid">Target Bid:</label>
+                <input type="number" id="advisor-custom-bid" min="1" max="13" value="4" class="input-bid-small">
+              </div>
+              <span id="contract-status-badge" class="status-pill info">⏳ In Progress</span>
+              <button type="button" class="btn btn-outline btn-sm" onclick="resetLiveTrickPlayState()">🔄 Reset Trick Round</button>
+            </div>
+          </div>
+
+          <!-- Contract Progress Indicator -->
+          <div class="contract-tracker-bar">
+            <div class="tracker-info">
+              <span id="contract-summary-text">Goal: 4 Tricks | Won: 0 | Remaining: 13 tricks left</span>
+            </div>
+            <div class="tracker-progress-track">
+              <div id="contract-progress-bar" class="tracker-progress-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- Live Trick Table Arena -->
+          <div class="trick-table-arena" id="live-trick-arena">
+            <!-- Top Status Bar -->
+            <div class="trick-status-banner" id="trick-status-summary">
+              <!-- Populated dynamically -->
+            </div>
+
+            <!-- Opponent Seats Row -->
+            <div class="seats-row" id="seats-row-container">
+              <!-- Dynamically populated by renderLiveTrickArena() based on advisorState.playerCount -->
+            </div>
+
+            <!-- Real-Time AI Recommendation Highlight Card -->
+            <div class="ai-recommendation-box" id="ai-play-suggestion-box">
+              <!-- Dynamically populated AI card suggestion -->
+            </div>
+
+            <!-- User Play Seat (Bottom) -->
+            <div class="user-seat-section">
+              <div class="user-seat-header">
+                <span class="user-seat-title">👤 YOUR HAND (Click a card to play):</span>
+                <span class="text-muted text-sm">Legal moves are active; Best move glows gold</span>
+              </div>
+              <div class="user-trick-cards-tray" id="user-trick-hand">
+                <!-- Dynamically populated interactive hand -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Trick Log -->
+          <div class="trick-log-section">
+            <div class="section-subheading">
+              <span>📜 Round Trick History Log</span>
+            </div>
+            <div class="trick-log-container" id="trick-history-log">
+              <p class="text-muted">No tricks played yet in this simulation.</p>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- TAB 2: HISTORY VIEW -->
+      <section id="tab-history" class="tab-content">
+        <div class="card">
+          <div class="card-header flex-between">
+            <div>
+              <h2>Match History</h2>
+              <p>Past matches recorded in storage</p>
+            </div>
+            <div class="history-actions">
+              <button class="btn btn-outline btn-sm" onclick="exportAllMatchesJSON()">📥 Export History (JSON)</button>
+              <button class="btn btn-danger btn-sm" onclick="confirmClearHistory()">🗑️ Clear History</button>
+            </div>
+          </div>
+
+          <div id="history-list-container">
+            <!-- Dynamic past matches rendered here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: SETTINGS & RULES VIEW -->
+      <section id="tab-settings" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <h2>Callbridge Scoring Rules & Settings</h2>
+            <p>Customize penalty and overtrick scoring rules</p>
+          </div>
+
+          <div class="settings-grid">
+            <div class="form-group">
+              <label for="rule-fail-penalty">❌ Failed Call Penalty Rule</label>
+              <select id="rule-fail-penalty" onchange="saveRuleSettings()">
+                <option value="full_negative" selected>Minus Full Call (-Call) [Standard]</option>
+                <option value="zero">Zero Points (0) [Casual]</option>
+                <option value="double_negative">Minus Double Call (-2 × Call) [Strict]</option>
+              </select>
+              <span class="help-text">What happens when a player fails to win their bid call.</span>
+            </div>
+
+            <div class="form-group">
+              <label for="rule-overtrick">✨ Overtrick (Extra Tricks) Bonus</label>
+              <select id="rule-overtrick" onchange="saveRuleSettings()">
+                <option value="0.1" selected>+0.1 points per extra trick [Standard Callbridge]</option>
+                <option value="1.0">+1.0 point per extra trick [Spades style]</option>
+                <option value="0.0">0 points for extra tricks [Strict Call]</option>
+              </select>
+              <span class="help-text">Bonus points added when winning more tricks than called.</span>
+            </div>
+
+            <div class="form-group">
+              <label for="rule-min-calls">⚠️ Total Call Validation Warning</label>
+              <select id="rule-min-calls" onchange="saveRuleSettings()">
+                <option value="0" selected>No minimum required</option>
+                <option value="10">Warn if total calls < 10</option>
+                <option value="11">Warn if total calls < 11</option>
+              </select>
+              <span class="help-text">Optional check for traditional total bid thresholds.</span>
+            </div>
+          </div>
+
+          <div class="rules-explainer">
+            <h3>Standard Callbridge Rules Reference</h3>
+            <ul>
+              <li><strong>Objective:</strong> Be the player with the highest cumulative points after all rounds.</li>
+              <li><strong>Bidding (Calls):</strong> Each player calls a minimum of 1 trick (up to 13).</li>
+              <li><strong>Tricks Won:</strong> Total tricks across all 4 players MUST equal 13 every round.</li>
+              <li><strong>Standard Scoring Formula:</strong>
+                <ul>
+                  <li>If <code>Won &ge; Call</code>: <code>Score = Call + (Won - Call) × 0.1</code></li>
+                  <li>If <code>Won &lt; Call</code>: <code>Score = -Call</code></li>
+                </ul>
+              </li>
+              <li><em>Example:</em> Call 3, Won 4 &rarr; <code>3 + (4-3)×0.1 = 3.1 pts</code>. Call 4, Won 3 &rarr; <code>-4.0 pts</code>.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal: In-Game Customization (Players & Match Rules) -->
+    <div id="game-customization-modal" class="modal-overlay hidden" onclick="handleModalOverlayClick(event)">
+      <div class="modal-card" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <div>
+            <h3>⚙️ Match Customization & Rules</h3>
+            <p class="subtitle">Change player count, names, main colour, or tricks on the fly</p>
+          </div>
+          <button type="button" class="modal-close-btn" onclick="closeGameCustomizationModal()">&times;</button>
+        </div>
+
+        <form id="game-customization-form" onsubmit="handleSaveGameCustomization(event)">
+          <!-- Player Count Selector -->
+          <div class="form-group">
+            <label for="modal-player-count">👥 Number of Players</label>
+            <select id="modal-player-count" onchange="handleModalPlayerCountChange(this.value)">
+              <option value="2">2 Players (13 tricks)</option>
+              <option value="3">3 Players (17 tricks)</option>
+              <option value="4" selected>4 Players (13 tricks — Standard)</option>
+              <option value="5">5 Players (10 tricks)</option>
+              <option value="6">6 Players (8 tricks)</option>
+            </select>
+            <span class="help-text">Adjusting player count preserves previous round scores.</span>
+          </div>
+
+          <!-- Dynamic Player Names -->
+          <div class="form-section">
+            <label class="section-title">🃏 Player Names</label>
+            <div class="players-input-grid" id="modal-players-input-grid">
+              <!-- Populated dynamically by renderModalPlayerInputs() -->
+            </div>
+          </div>
+
+          <!-- Main Colour / Trump Rule, Tricks, Rounds -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="modal-trump-rule">👑 Main Colour (Trump)</label>
+              <select id="modal-trump-rule">
+                <option value="S">♠ Spades (Standard Callbridge)</option>
+                <option value="H">♥ Hearts</option>
+                <option value="D">♦ Diamonds</option>
+                <option value="C">♣ Clubs</option>
+                <option value="rotate">🔄 Rotate Each Round (♠ → ♥ → ♦ → ♣)</option>
+                <option value="dealer">🃏 Dealer Decides Trump Each Round</option>
+                <option value="NT">🚫 No Trump (Pure High Cards)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="modal-tricks-per-round">🎯 Tricks Per Round</label>
+              <input type="number" id="modal-tricks-per-round" min="1" max="26" value="13" required>
+              <span class="help-text">Standard: 13 (4p/2p), 17 (3p), 10 (5p), 8 (6p)</span>
+            </div>
+
+            <div class="form-group">
+              <label for="modal-total-rounds">🏁 Total Match Rounds</label>
+              <input type="number" id="modal-total-rounds" min="1" max="25" value="5" required>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeGameCustomizationModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">💾 Save & Apply Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Callbridge Master App &bull; Local Storage & API Sync Enabled &bull; Built for Callbridge Lovers ♠️♥️♦️♣️</p>
+    </footer>
+  </div>
+
+  <script src="app.js?v=3"></script>
+  <script src="advisor.js?v=3"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "callbridge-score-master",
+  "version": "1.0.0",
+  "description": "Callbridge Card Game Score Calculator & Match Tracker",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "callbridge",
+    "card-game",
+    "score-calculator",
+    "scoreboard",
+    "spades",
+    "express"
+  ],
+  "author": "Hermes Agent",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}
