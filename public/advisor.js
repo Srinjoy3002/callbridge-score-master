@@ -198,7 +198,7 @@ function renderDeckPickerGrid() {
     label.innerHTML = `
       <span class="suit-icon">${suit.symbol}</span> 
       <span class="suit-name">${suit.name}</span> 
-      ${isTrump ? '<span class="trump-tag">MAIN COLOUR (TRUMP)</span>' : ''}
+      ${isTrump ? '<span class="trump-tag">👑 TRUMP</span>' : ''}
     `;
     suitRow.appendChild(label);
 

@@ -142,6 +142,8 @@ body {
   padding: 1.5rem;
   margin-bottom: 1.5rem;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .card-header {
@@ -739,6 +741,9 @@ select:focus, input[type="number"]:focus {
   background: linear-gradient(180deg, rgba(22, 27, 34, 0.95), rgba(13, 17, 23, 0.95));
   border: 1px solid rgba(56, 189, 248, 0.2);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .advisor-quick-actions {
@@ -774,67 +779,106 @@ select:focus, input[type="number"]:focus {
 .advisor-config-toolbar,
 .game-customization-toolbar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.85rem;
   background: rgba(13, 17, 23, 0.7);
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
   border: 1px solid var(--border-color);
   margin-top: 0.5rem;
   margin-bottom: 1.25rem;
-  flex-wrap: wrap;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .game-toolbar-trump {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.45rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .game-toolbar-meta {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.6rem;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .toolbar-group {
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.45rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.toolbar-header-row {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  width: 100%;
 }
 
 .toolbar-label {
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--accent-gold);
+  letter-spacing: 0.02em;
+}
+
+.toolbar-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
 }
 
 .trump-toggle-group, .player-toggle-group {
-  display: flex;
-  gap: 0.35rem;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   background: var(--bg-dark);
-  padding: 0.25rem;
-  border-radius: 8px;
+  padding: 3px;
+  border-radius: 10px;
   border: 1px solid var(--border-color);
+  gap: 3px;
+  overflow: hidden;
 }
 
-.trump-toggle-btn {
+.trump-toggle-btn, .player-toggle-btn {
   background: transparent;
   border: 1px solid transparent;
   color: var(--text-muted);
-  padding: 0.3rem 0.6rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
+  padding: 0.45rem 0.25rem;
+  border-radius: 7px;
+  font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.15s ease;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.trump-toggle-btn:hover {
+.trump-toggle-btn:hover, .player-toggle-btn:hover {
   color: var(--text-main);
   background: rgba(255, 255, 255, 0.05);
 }
@@ -1975,20 +2019,28 @@ select:focus, input[type="number"]:focus {
   }
 
   .trump-toggle-group {
-    width: 100%;
-    display: flex;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    padding: 2px !important;
+    gap: 2px !important;
   }
 
   .trump-toggle-btn {
-    flex: 1 1 0;
-    min-width: 55px;
-    padding: 0.35rem 0.2rem;
-    font-size: 0.75rem;
-    justify-content: center;
-    white-space: nowrap;
-    text-align: center;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 0.4rem 0.1rem !important;
+    font-size: 0.72rem !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
 
   .game-toolbar-meta {
@@ -2116,42 +2168,65 @@ select:focus, input[type="number"]:focus {
   }
 
   .advisor-config-toolbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.6rem;
-    padding: 0.65rem 0.6rem;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.65rem !important;
+    padding: 0.75rem 0.6rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
   }
 
   .player-toggle-group {
-    width: 100%;
-    display: flex;
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    padding: 2px !important;
+    gap: 2px !important;
   }
 
   .player-toggle-btn {
-    flex: 1 1 0;
-    text-align: center;
-    padding: 0.35rem 0.2rem;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 0.4rem 0.1rem !important;
+    font-size: 0.8rem !important;
+    justify-content: center !important;
+    text-align: center !important;
   }
 
   .suit-picker-row {
-    grid-template-columns: 1fr;
-    gap: 0.35rem;
-    background: rgba(255, 255, 255, 0.02);
-    padding: 0.4rem;
-    border-radius: 8px;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.4rem !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    padding: 0.45rem !important;
+    border-radius: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .suit-cards-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr) !important;
+    gap: 3px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .picker-card-btn {
-    padding: 0.35rem 0.25rem;
-    font-size: 0.78rem;
-    min-width: 27px;
-    height: 32px;
+    padding: 0.35rem 0.1rem !important;
+    font-size: 0.75rem !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    height: 32px !important;
+    box-sizing: border-box !important;
+    justify-content: center !important;
   }
 
   /* Hand Tray & Cards */
@@ -2180,10 +2255,30 @@ select:focus, input[type="number"]:focus {
     font-size: 1.1rem;
   }
 
+  /* Metrics Pill Group on Mobile */
+  .metrics-pill-group {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.45rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .metric-pill {
+    min-width: 0 !important;
+    padding: 0.45rem 0.6rem !important;
+  }
+
   /* Bid Recommendation Cards */
   .bid-recommendations-grid {
     grid-template-columns: 1fr;
     gap: 0.6rem;
+  }
+
+  /* Suit Strategic Breakdown Cards on Mobile */
+  .suit-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
   }
 
   .bid-card {

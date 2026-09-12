@@ -163,11 +163,11 @@
             <div class="game-toolbar-trump">
               <span class="toolbar-label">👑 Switch Main Colour:</span>
               <div class="trump-toggle-group" id="game-trump-selector">
-                <button type="button" id="game-trump-s" class="trump-toggle-btn suit-spades active" onclick="setGameMainColour('S')">♠️ Spades</button>
-                <button type="button" id="game-trump-h" class="trump-toggle-btn suit-hearts" onclick="setGameMainColour('H')">♥️ Hearts</button>
-                <button type="button" id="game-trump-d" class="trump-toggle-btn suit-diamonds" onclick="setGameMainColour('D')">♦️ Diamonds</button>
-                <button type="button" id="game-trump-c" class="trump-toggle-btn suit-clubs" onclick="setGameMainColour('C')">♣️ Clubs</button>
-                <button type="button" id="game-trump-nt" class="trump-toggle-btn suit-nt" onclick="setGameMainColour('NT')">🚫 No Trump</button>
+                <button type="button" id="game-trump-s" class="trump-toggle-btn suit-spades active" onclick="setGameMainColour('S')">♠ Spades</button>
+                <button type="button" id="game-trump-h" class="trump-toggle-btn suit-hearts" onclick="setGameMainColour('H')">♥ Hearts</button>
+                <button type="button" id="game-trump-d" class="trump-toggle-btn suit-diamonds" onclick="setGameMainColour('D')">♦ Diamonds</button>
+                <button type="button" id="game-trump-c" class="trump-toggle-btn suit-clubs" onclick="setGameMainColour('C')">♣ Clubs</button>
+                <button type="button" id="game-trump-nt" class="trump-toggle-btn suit-nt" onclick="setGameMainColour('NT')">🚫 NT</button>
               </div>
             </div>
             <div class="game-toolbar-meta">
@@ -256,15 +256,12 @@
         <div class="card advisor-card">
           <div class="card-header flex-between flex-wrap gap-1">
             <div>
-              <h2>🔮 AI Probability & Trick Play Advisor</h2>
-              <p>Pick your 13 cards to calculate win odds, optimal bids, and real-time trick tactics</p>
+              <h2>🔮 AI Probability & Strategy Advisor</h2>
+              <p class="subtitle">Pick your cards to calculate win odds, optimal bids, and live tactics</p>
             </div>
             <div class="advisor-quick-actions">
               <span id="hand-count-badge" class="badge-pill badge-warning">0 / 13 Selected</span>
               <button type="button" class="btn btn-primary btn-sm" onclick="dealRandomHand()">🎲 Deal Random</button>
-              <button type="button" class="btn btn-outline btn-sm" onclick="dealPresetHand('strong')">♠️ Strong Hand</button>
-              <button type="button" class="btn btn-outline btn-sm" onclick="dealPresetHand('trump_heavy')">♣️ Trump Heavy</button>
-              <button type="button" class="btn btn-outline btn-sm" onclick="dealPresetHand('void_heavy')">⚡ Void Heavy</button>
               <button type="button" class="btn btn-secondary btn-sm" onclick="clearAdvisorHand()">🔄 Clear</button>
             </div>
           </div>
@@ -272,18 +269,23 @@
           <!-- Main Colour (Trump) and Player Count Configuration Toolbar -->
           <div class="advisor-config-toolbar">
             <div class="toolbar-group">
-              <span class="toolbar-label">👑 Main Colour:</span>
+              <div class="toolbar-header-row">
+                <span class="toolbar-label">👑 Main Colour:</span>
+              </div>
               <div class="trump-toggle-group" id="advisor-trump-selector">
-                <button type="button" id="trump-btn-s" class="trump-toggle-btn suit-spades active" onclick="setAdvisorTrump('S')">♠️ Spades</button>
-                <button type="button" id="trump-btn-h" class="trump-toggle-btn suit-hearts" onclick="setAdvisorTrump('H')">♥️ Hearts</button>
-                <button type="button" id="trump-btn-d" class="trump-toggle-btn suit-diamonds" onclick="setAdvisorTrump('D')">♦️ Diamonds</button>
-                <button type="button" id="trump-btn-c" class="trump-toggle-btn suit-clubs" onclick="setAdvisorTrump('C')">♣️ Clubs</button>
-                <button type="button" id="trump-btn-nt" class="trump-toggle-btn suit-nt" onclick="setAdvisorTrump('NT')">🚫 No Trump</button>
+                <button type="button" id="trump-btn-s" class="trump-toggle-btn suit-spades active" onclick="setAdvisorTrump('S')">♠ Spades</button>
+                <button type="button" id="trump-btn-h" class="trump-toggle-btn suit-hearts" onclick="setAdvisorTrump('H')">♥ Hearts</button>
+                <button type="button" id="trump-btn-d" class="trump-toggle-btn suit-diamonds" onclick="setAdvisorTrump('D')">♦ Diamonds</button>
+                <button type="button" id="trump-btn-c" class="trump-toggle-btn suit-clubs" onclick="setAdvisorTrump('C')">♣ Clubs</button>
+                <button type="button" id="trump-btn-nt" class="trump-toggle-btn suit-nt" onclick="setAdvisorTrump('NT')">🚫 NT</button>
               </div>
             </div>
 
             <div class="toolbar-group">
-              <span class="toolbar-label">👥 Players:</span>
+              <div class="toolbar-header-row">
+                <span class="toolbar-label">👥 Players:</span>
+                <span class="toolbar-hint" id="advisor-hand-size-hint">13 cards / 13 tricks</span>
+              </div>
               <div class="player-toggle-group" id="advisor-player-selector">
                 <button type="button" id="player-btn-2" class="player-toggle-btn" onclick="setAdvisorPlayerCount(2)">2</button>
                 <button type="button" id="player-btn-3" class="player-toggle-btn" onclick="setAdvisorPlayerCount(3)">3</button>
@@ -291,7 +293,6 @@
                 <button type="button" id="player-btn-5" class="player-toggle-btn" onclick="setAdvisorPlayerCount(5)">5</button>
                 <button type="button" id="player-btn-6" class="player-toggle-btn" onclick="setAdvisorPlayerCount(6)">6</button>
               </div>
-              <span class="text-muted text-sm" id="advisor-hand-size-hint">(13 cards / 13 tricks)</span>
             </div>
           </div>
 
